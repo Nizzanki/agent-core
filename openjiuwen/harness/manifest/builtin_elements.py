@@ -77,6 +77,31 @@ WEB_FETCH = "core.web_fetch"
 WEB_PAID_SEARCH = "core.web_paid_search"
 VISION = "core.vision"
 AUDIO = "core.audio"
+# Distinct from agent_teams.rails.elements.OBSERVABILITY ("core.observability")
+# — the catalog rejects duplicate names, and a standalone DeepAgent needs its
+# own rail bound to the standalone ObservabilityRuntime
+# (extensions.observability.setup), not the Team one.
+STANDALONE_OBSERVABILITY = "core.observability.standalone"
+
+
+def _build_standalone_observability_rail(params: dict[str, Any], context: Any) -> Any:
+    """Build a StandaloneObservabilityRail when observability is available and on.
+
+    Two gates, in order — mirrors ``agent_teams.rails.elements.build_observability_rail``
+    for the standalone runtime: the optional ``observability`` extra must be
+    installed, and ``extensions.observability.setup`` must be initialized.
+    Returns ``None`` for either, a safe unconditional addition to a spec's
+    ``rails`` list.
+    """
+    del params, context
+    from openjiuwen.extensions.observability.rail import (
+        maybe_standalone_observability_rail,
+        observability_dependency_installed,
+    )
+
+    if not observability_dependency_installed():
+        return None
+    return maybe_standalone_observability_rail()
 
 
 def _build_skill_use_rail(params: dict[str, Any], context: Any) -> SkillUseRail:
@@ -421,6 +446,12 @@ harness_element(
     description="Language-server rail rooted at the project directory.",
     input_model=LspInput,
     builder=_build_lsp_rail,
+)
+harness_element(
+    kind=ElementKind.RAIL,
+    name=STANDALONE_OBSERVABILITY,
+    description="Creates a session-rooted span tree for a DeepAgent running outside a Team.",
+    builder=_build_standalone_observability_rail,
 )
 harness_element(
     kind=ElementKind.TOOL,
