@@ -61,7 +61,7 @@ def read_run_log(path: Union[str, Path], *, limit: int = 200) -> list[dict[str, 
     except OSError:
         return []
     entries: list[dict[str, Any]] = []
-    for line in lines[-max(1, limit):]:
+    for line in lines[-max(1, limit) :]:
         try:
             payload = json.loads(line)
         except json.JSONDecodeError:

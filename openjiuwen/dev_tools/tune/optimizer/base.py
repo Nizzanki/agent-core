@@ -19,10 +19,7 @@ from openjiuwen.dev_tools.tune.utils import TuneUtils
 
 
 class BaseOptimizer:
-    def __init__(self,
-                 parameters: Optional[Dict[str, LLMCall]] = None,
-                 **kwargs
-                 ):
+    def __init__(self, parameters: Optional[Dict[str, LLMCall]] = None, **kwargs):
         self._parameters: Dict[str, TextualParameter] = {}
         self._history = OptimizeHistory()
         self._bad_cases: List[EvaluatedCase] = []
@@ -48,27 +45,26 @@ class BaseOptimizer:
         for name, llm_call in parameters.items():
             if not llm_call:
                 raise build_error(
-                    StatusCode.TOOLCHAIN_OPTIMIZER_PARAM_ERROR,
-                    error_msg=f"cannot bind a None parameter of {name}"
+                    StatusCode.TOOLCHAIN_OPTIMIZER_PARAM_ERROR, error_msg=f"cannot bind a None parameter of {name}"
                 )
             self._parameters[name] = TextualParameter(llm_call)
         self._history = OptimizeHistory()
         self._bad_cases: List[EvaluatedCase] = []
 
-    def backward(self,
-                 evaluated_cases: List[EvaluatedCase],
-                 ):
+    def backward(
+        self,
+        evaluated_cases: List[EvaluatedCase],
+    ):
         self._validate_parameters()
         self._get_bad_cases(evaluated_cases)
         try:
             self._backward(evaluated_cases)
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             raise build_error(
-                StatusCode.TOOLCHAIN_OPTIMIZER_BACKWARD_EXECUTION_ERROR,
-                error_msg=f"{str(e)}",
-                cause=e
+                StatusCode.TOOLCHAIN_OPTIMIZER_BACKWARD_EXECUTION_ERROR, error_msg=f"{str(e)}", cause=e
             ) from e
 
     def update(self):
@@ -81,26 +77,24 @@ class BaseOptimizer:
                     metadata={
                         "llm_call_name": name,
                         "frozen_system_prompt": param.llm_call.get_freeze_system_prompt(),
-                        "system_prompt_content": str(param.llm_call.get_system_prompt().content)
+                        "system_prompt_content": str(param.llm_call.get_system_prompt().content),
                     },
-                    event_type=LogEventType.AGENT_START
+                    event_type=LogEventType.AGENT_START,
                 )
                 agent_logger.info(
                     "LLM call basic user prompt info",
                     metadata={
                         "llm_call_name": name,
                         "frozen_system_prompt": param.llm_call.get_freeze_user_prompt(),
-                        "system_prompt_content": str(param.llm_call.get_user_prompt().content)
+                        "system_prompt_content": str(param.llm_call.get_user_prompt().content),
                     },
-                    event_type=LogEventType.AGENT_START
+                    event_type=LogEventType.AGENT_START,
                 )
             self._history.clear_history()
         except Exception as e:
             self._history.clear_history()
             raise build_error(
-                StatusCode.TOOLCHAIN_OPTIMIZER_UPDATE_EXECUTION_ERROR,
-                error_msg=f"{str(e)}",
-                cause=e
+                StatusCode.TOOLCHAIN_OPTIMIZER_UPDATE_EXECUTION_ERROR, error_msg=f"{str(e)}", cause=e
             ) from e
 
     @abstractmethod
@@ -108,25 +102,21 @@ class BaseOptimizer:
         pass
 
     @abstractmethod
-    def _backward(self,
-                 evaluated_cases: List[EvaluatedCase],
-                 ):
+    def _backward(
+        self,
+        evaluated_cases: List[EvaluatedCase],
+    ):
         pass
 
     def parameters(self) -> Dict[str, "TextualParameter"]:
         return self._parameters
 
-    async def trace_callback(self,
-                             llm_call_id: str,
-                             node_input: Dict[str, str],
-                             output: BaseMessage,
-                             session: Session
-                             ):
+    async def trace_callback(self, llm_call_id: str, node_input: Dict[str, str], output: BaseMessage, session: Session):
         trace_node = TraceNode(
             case_id=session.get_session_id(),
             llm_call_id=llm_call_id,
             inputs=node_input,
-            outputs=TuneUtils.get_output_string_from_message(output)
+            outputs=TuneUtils.get_output_string_from_message(output),
         )
         self._history.add_history(session.get_session_id(), trace_node)
 
@@ -141,10 +131,7 @@ class BaseOptimizer:
 
     def _validate_parameters(self):
         if not self._parameters:
-            raise build_error(
-                StatusCode.TOOLCHAIN_AGENT_PARAM_ERROR,
-                error_msg="cannot optimize empty parameters"
-            )
+            raise build_error(StatusCode.TOOLCHAIN_AGENT_PARAM_ERROR, error_msg="cannot optimize empty parameters")
 
 
 class TextualParameter:

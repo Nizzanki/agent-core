@@ -151,10 +151,7 @@ class Execution:
             "latency_s": round(self.latency_s, 4),
             "total_tokens": self.total_tokens,
             "error": self.error,
-            "outputs": [
-                {"input": r.case_input, "output": r.output, "hidden": r.hidden}
-                for r in self.case_results
-            ],
+            "outputs": [{"input": r.case_input, "output": r.output, "hidden": r.hidden} for r in self.case_results],
         }
 
 

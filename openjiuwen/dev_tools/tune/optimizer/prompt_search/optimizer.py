@@ -160,7 +160,8 @@ class PromptSearchOptimizer(BaseOptimizer):
             self._reward_model = reward_model
         else:
             evaluator = evaluator or DefaultEvaluator(
-                self._judge_model_config, self._judge_model_client_config,
+                self._judge_model_config,
+                self._judge_model_client_config,
                 metric=_CORRECTNESS_METRIC_HINT,
             )
             weights = dict(reward_weights) if reward_weights else dict(DEFAULT_REWARD_WEIGHTS)
@@ -218,9 +219,7 @@ class PromptSearchOptimizer(BaseOptimizer):
         if similar:
             self._log.record("memory.warm_start", count=len(similar))
 
-        convergence = ConvergenceDetector(
-            threshold=self._convergence_threshold, window=self._convergence_window
-        )
+        convergence = ConvergenceDetector(threshold=self._convergence_threshold, window=self._convergence_window)
 
         best_prompt = task.base_prompt
         best_score = float("-inf")
@@ -327,17 +326,13 @@ class PromptSearchOptimizer(BaseOptimizer):
 
     async def _execute_all(self, candidates: list, task: PromptTaskSpec) -> list:
         if self._parallel_execution:
-            return list(
-                await asyncio.gather(*(self._environment.execute(c, task) for c in candidates))
-            )
+            return list(await asyncio.gather(*(self._environment.execute(c, task) for c in candidates)))
         return [await self._environment.execute(c, task) for c in candidates]
 
     async def _drift_all(self, candidates: list, task: PromptTaskSpec) -> dict:
         if self._drift_penalty <= 0:
             return {c.candidate_id: 0.0 for c in candidates}
-        scores = await asyncio.gather(
-            *(self._drift_judge.deviation(task.objective, c) for c in candidates)
-        )
+        scores = await asyncio.gather(*(self._drift_judge.deviation(task.objective, c) for c in candidates))
         return {c.candidate_id: s for c, s in zip(candidates, scores)}
 
     def _safe_search(self, task: PromptTaskSpec) -> list:
@@ -347,9 +342,7 @@ class PromptSearchOptimizer(BaseOptimizer):
             logger.warning(f"PromptSearchOptimizer: memory search failed: {exc}")
             return []
 
-    def _persist_best(
-        self, task: PromptTaskSpec, best_prompt: str, best_score: float, iterations: list
-    ) -> None:
+    def _persist_best(self, task: PromptTaskSpec, best_prompt: str, best_score: float, iterations: list) -> None:
         if not iterations or not best_prompt or best_score == float("-inf"):
             return
         best_eval = _best_evaluation(iterations)
@@ -390,9 +383,7 @@ class PromptSearchOptimizer(BaseOptimizer):
         # a moving target.
         for name, param in self._parameters.items():
             if name not in self._objectives:
-                self._objectives[name] = TuneUtils.get_content_string_from_template(
-                    param.llm_call.get_system_prompt()
-                )
+                self._objectives[name] = TuneUtils.get_content_string_from_template(param.llm_call.get_system_prompt())
 
     def _backward(self, evaluated_cases: list) -> None:
         for name, param in self._parameters.items():

@@ -105,8 +105,10 @@ def test_execution_error_scores_zero():
     ex = _execution()
     ex.error = "boom"
     reward = CompositeReward(
-        [CustomReward("a", lambda e, t: 1.0)], {"a": 1.0},
-        min_correctness=0.0, drift_penalty=0.0,
+        [CustomReward("a", lambda e, t: 1.0)],
+        {"a": 1.0},
+        min_correctness=0.0,
+        drift_penalty=0.0,
     )
     [bd] = asyncio.run(reward.evaluate([ex], _task(), {}))
     assert bd.score == 0.0

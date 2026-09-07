@@ -36,13 +36,11 @@ class ConvergenceDetector:
         self._rewards.append(reward)
         rewards = self._rewards
         best = max(rewards)
-        recent = rewards[-self.window:]
+        recent = rewards[-self.window :]
         moving_average = sum(recent) / len(recent)
         variance = pvariance(recent) if len(recent) > 1 else 0.0
 
-        state = ConvergenceState(
-            best=best, moving_average=moving_average, variance=variance
-        )
+        state = ConvergenceState(best=best, moving_average=moving_average, variance=variance)
 
         if self.target is not None and best >= self.target:
             state.converged = True
@@ -54,9 +52,7 @@ class ConvergenceDetector:
             prior_best = max(rewards[: -self.window])
             if best - prior_best <= self.threshold:
                 state.converged = True
-                state.reason = (
-                    f"no improvement > {self.threshold:.3f} over last {self.window} iterations"
-                )
+                state.reason = f"no improvement > {self.threshold:.3f} over last {self.window} iterations"
                 return state
 
         if len(recent) >= self.window and variance <= self.threshold**2:

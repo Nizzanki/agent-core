@@ -6,7 +6,9 @@ from openjiuwen.dev_tools.tune.optimizer.prompt_search.models import PromptRecor
 
 def _record(prompt, reward, objective, chars="", baseline_reward=None):
     return PromptRecord(
-        prompt=prompt, reward=reward, objective=objective,
+        prompt=prompt,
+        reward=reward,
+        objective=objective,
         task_characteristics=chars or objective,
         baseline_reward=baseline_reward,
     )

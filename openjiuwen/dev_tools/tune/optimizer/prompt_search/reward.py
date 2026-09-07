@@ -140,9 +140,7 @@ class CompletenessReward(RewardComponent):
         results = execution.visible_results
         if not results:
             return 0.0
-        ok = sum(
-            1 for r in results if r.error is None and len((r.output or "").strip()) >= self._min_chars
-        )
+        ok = sum(1 for r in results if r.error is None and len((r.output or "").strip()) >= self._min_chars)
         return ok / len(results)
 
 
@@ -246,9 +244,7 @@ class CompositeReward(RewardModel):
         self._drift_penalty = max(0.0, drift_penalty)
         self._normalize = normalize
         self._correctness_name = correctness_name
-        self._correctness = next(
-            (c for c in self._components if isinstance(c, CorrectnessReward)), None
-        )
+        self._correctness = next((c for c in self._components if isinstance(c, CorrectnessReward)), None)
 
     async def evaluate(
         self,
@@ -263,14 +259,9 @@ class CompositeReward(RewardModel):
 
         raw: dict = {}
         for component in self._components:
-            raw[component.name] = await asyncio.gather(
-                *(component.score(ex, task) for ex in executions)
-            )
+            raw[component.name] = await asyncio.gather(*(component.score(ex, task) for ex in executions))
 
-        norm = {
-            name: (min_max_normalize(values) if self._normalize else list(values))
-            for name, values in raw.items()
-        }
+        norm = {name: (min_max_normalize(values) if self._normalize else list(values)) for name, values in raw.items()}
 
         hidden_correctness = await self._hidden_correctness(executions, task)
         total_weight = sum(self._weights.get(c.name, 0.0) for c in self._components) or 1.0
@@ -279,9 +270,7 @@ class CompositeReward(RewardModel):
         for idx, ex in enumerate(executions):
             components = {name: norm[name][idx] for name in norm}
             raw_components = {name: raw[name][idx] for name in raw}
-            weighted = sum(
-                self._weights.get(name, 0.0) * value for name, value in components.items()
-            )
+            weighted = sum(self._weights.get(name, 0.0) * value for name, value in components.items())
             score = weighted / total_weight
 
             correctness = raw_components.get(self._correctness_name, 1.0)
@@ -291,18 +280,14 @@ class CompositeReward(RewardModel):
             if self._correctness is not None and correctness < self._min_correctness:
                 gated = True
                 score = min(score, correctness)
-                notes.append(
-                    f"correctness {correctness:.2f} < gate {self._min_correctness:.2f}: reward capped"
-                )
+                notes.append(f"correctness {correctness:.2f} < gate {self._min_correctness:.2f}: reward capped")
 
             hid = hidden_correctness.get(ex.candidate.candidate_id)
             if hid is not None and correctness - hid > _OVERFIT_MARGIN:
                 gap = correctness - hid
                 penalty = _OVERFIT_PENALTY * gap
                 score = max(0.0, score - penalty)
-                notes.append(
-                    f"overfitting: visible {correctness:.2f} vs hidden {hid:.2f} (-{penalty:.2f})"
-                )
+                notes.append(f"overfitting: visible {correctness:.2f} vs hidden {hid:.2f} (-{penalty:.2f})")
 
             drift = clamp01(drift_scores.get(ex.candidate.candidate_id, 0.0))
             drift_applied = self._drift_penalty * drift
@@ -332,9 +317,7 @@ class CompositeReward(RewardModel):
         if self._correctness is None or not task.hidden_cases:
             return {}
         result: dict = {}
-        scores = await asyncio.gather(
-            *(self._correctness.correctness_on(ex.hidden_results, task) for ex in executions)
-        )
+        scores = await asyncio.gather(*(self._correctness.correctness_on(ex.hidden_results, task) for ex in executions))
         for ex, sc in zip(executions, scores):
             result[ex.candidate.candidate_id] = sc
         return result

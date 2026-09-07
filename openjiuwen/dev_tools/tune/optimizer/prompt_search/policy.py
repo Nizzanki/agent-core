@@ -30,8 +30,7 @@ class PromptPolicy(ABC):
     """Produces candidate system prompts. The strategy should evolve with history."""
 
     @abstractmethod
-    async def generate(self, request: PolicyRequest) -> list[PromptCandidate]:
-        ...
+    async def generate(self, request: PolicyRequest) -> list[PromptCandidate]: ...
 
 
 _SYSTEM = (
@@ -98,13 +97,9 @@ class LLMPromptPolicy(PromptPolicy):
                 ),
             )
         elif request.iteration == 1 and task.base_prompt:
-            candidates.insert(
-                0, PromptCandidate(prompt=task.base_prompt, rationale="user base prompt")
-            )
+            candidates.insert(0, PromptCandidate(prompt=task.base_prompt, rationale="user base prompt"))
 
-        return candidates[:n] or [
-            PromptCandidate(prompt=task.base_prompt or task.objective, rationale="fallback")
-        ]
+        return candidates[:n] or [PromptCandidate(prompt=task.base_prompt or task.objective, rationale="fallback")]
 
 
 def _constraints_block(constraints: list) -> str:

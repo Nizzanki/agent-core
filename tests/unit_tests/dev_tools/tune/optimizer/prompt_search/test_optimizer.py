@@ -4,6 +4,7 @@
 every collaborator is overridden with a deterministic stub, matching how the equivalent
 loop was tested before this optimizer moved here from jiuwenswarm's Symphony layer.
 """
+
 import asyncio
 
 from openjiuwen.dev_tools.tune.optimizer.prompt_search.drift import NullDriftJudge
@@ -20,10 +21,7 @@ class VersionPolicy(PromptPolicy):
 
     async def generate(self, request: PolicyRequest):
         n = request.iteration
-        return [
-            PromptCandidate(prompt=f"v{n}", rationale=f"iter {n}")
-            for _ in range(request.num_candidates)
-        ]
+        return [PromptCandidate(prompt=f"v{n}", rationale=f"iter {n}") for _ in range(request.num_candidates)]
 
 
 def _runner(system_prompt: str, case_input: str) -> str:

@@ -5,6 +5,7 @@ candidate pool — the "multiple candidate prompts per round" capability
 PromptSearchOptimizer unlocks. Trainer.evaluate() is mocked so this exercises
 only the candidate-search control flow, not a full agent/evaluator stack.
 """
+
 from unittest.mock import MagicMock, patch
 
 from openjiuwen.dev_tools.tune.optimizer.base import TextualParameter

@@ -7,7 +7,9 @@ Agent, or ``Trainer`` required::
 
     from openjiuwen.core.foundation.llm import ModelRequestConfig, ModelClientConfig
     from openjiuwen.dev_tools.tune.optimizer.prompt_search import (
-        PromptTaskCase, PromptTaskSpec, optimize_prompt,
+        PromptTaskCase,
+        PromptTaskSpec,
+        optimize_prompt,
     )
 
     task = PromptTaskSpec(

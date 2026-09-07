@@ -31,12 +31,10 @@ class PromptMemory(ABC):
     """Persistent store of prior optimizations with similarity retrieval."""
 
     @abstractmethod
-    def add(self, record: PromptRecord) -> None:
-        ...
+    def add(self, record: PromptRecord) -> None: ...
 
     @abstractmethod
-    def search_similar(self, task: PromptTaskSpec, top_k: int = 3) -> list:
-        ...
+    def search_similar(self, task: PromptTaskSpec, top_k: int = 3) -> list: ...
 
     @abstractmethod
     def best_for_objective(self, objective: str) -> Optional[PromptRecord]:
