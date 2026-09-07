@@ -6,12 +6,11 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Optional
 
 from openjiuwen.core.common.logging import logger
 from openjiuwen.core.foundation.llm import Model, SystemMessage, UserMessage
 from openjiuwen.dev_tools.tune.optimizer.prompt_search.history import OptimizationHistory
-from openjiuwen.dev_tools.tune.optimizer.prompt_search.models import PromptCandidate, PromptRecord, PromptTaskSpec
+from openjiuwen.dev_tools.tune.optimizer.prompt_search.models import PromptCandidate, PromptTaskSpec
 from openjiuwen.dev_tools.tune.utils import TuneUtils
 
 

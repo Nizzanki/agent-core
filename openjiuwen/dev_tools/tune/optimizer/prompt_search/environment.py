@@ -13,7 +13,7 @@ from __future__ import annotations
 import asyncio
 import time
 from abc import ABC, abstractmethod
-from typing import Awaitable, Callable, Optional
+from typing import Awaitable, Callable
 
 from openjiuwen.core.foundation.llm import Model, SystemMessage, UserMessage
 from openjiuwen.dev_tools.tune.optimizer.prompt_search.models import (

@@ -31,7 +31,7 @@ from __future__ import annotations
 import asyncio
 import uuid
 from datetime import datetime, timezone
-from typing import Callable, Dict, Optional
+from typing import Dict, Optional
 
 from openjiuwen.core.common.logging import logger
 from openjiuwen.core.foundation.llm import Model, ModelClientConfig, ModelRequestConfig
@@ -56,10 +56,8 @@ from openjiuwen.dev_tools.tune.optimizer.prompt_search.history import (
 from openjiuwen.dev_tools.tune.optimizer.prompt_search.memory import NullPromptMemory, PromptMemory
 from openjiuwen.dev_tools.tune.optimizer.prompt_search.models import (
     Evaluation,
-    Execution,
     IterationRecord,
     OptimizationResult,
-    PromptCandidate,
     PromptRecord,
     PromptTaskCase,
     PromptTaskSpec,

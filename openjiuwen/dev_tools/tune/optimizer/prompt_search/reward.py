@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import Awaitable, Callable, Optional
+from typing import Awaitable, Callable
 
 from openjiuwen.core.common.logging import logger
 from openjiuwen.dev_tools.tune.base import Case

@@ -1,24 +1,24 @@
 # coding: utf-8
 # Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
 import asyncio
-import random
-from typing import List, Tuple, Dict, Optional
-from concurrent.futures import ThreadPoolExecutor
 import copy
+import random
+from concurrent.futures import ThreadPoolExecutor
+from typing import Dict, List, Optional, Tuple
 
 from tqdm import tqdm
 
-from openjiuwen.dev_tools.tune.utils import TuneUtils
-from openjiuwen.core.single_agent.legacy import LegacyBaseAgent as BaseAgent
 from openjiuwen.core.common.exception.codes import StatusCode
 from openjiuwen.core.common.exception.errors import build_error
 from openjiuwen.core.common.logging import logger
 from openjiuwen.core.operator.legacy.llm_call.base import LLMCall
-from openjiuwen.dev_tools.tune.base import EvaluatedCase, TuneConstant, Case
+from openjiuwen.core.single_agent.legacy import LegacyBaseAgent as BaseAgent
+from openjiuwen.dev_tools.tune.base import Case, EvaluatedCase, TuneConstant
 from openjiuwen.dev_tools.tune.dataset.case_loader import CaseLoader
 from openjiuwen.dev_tools.tune.evaluator.evaluator import BaseEvaluator
 from openjiuwen.dev_tools.tune.optimizer.base import BaseOptimizer, TextualParameter
-from openjiuwen.dev_tools.tune.trainer.base import Progress, Callbacks
+from openjiuwen.dev_tools.tune.trainer.base import Callbacks, Progress
+from openjiuwen.dev_tools.tune.utils import TuneUtils
 
 DEFAULT_CANDIDATES_SAMPLE_NUM: int = 6
 
@@ -49,7 +49,7 @@ class Trainer:
         if not self._check_trainable(agent):
             raise build_error(
                 StatusCode.TOOLCHAIN_TRAINER_EXECUTION_ERROR,
-                error_msg=f"trainer only support current Agent right now"
+                error_msg="trainer only support current Agent right now"
             )
         progress: Progress = self._pre_train(agent, **kwargs)
         if not val_cases:
