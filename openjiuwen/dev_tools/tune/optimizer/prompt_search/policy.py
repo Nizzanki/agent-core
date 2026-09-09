@@ -30,7 +30,8 @@ class PromptPolicy(ABC):
     """Produces candidate system prompts. The strategy should evolve with history."""
 
     @abstractmethod
-    async def generate(self, request: PolicyRequest) -> list[PromptCandidate]: ...
+    async def generate(self, request: PolicyRequest) -> list[PromptCandidate]:
+        """Generate candidate prompts for the given request."""
 
 
 _SYSTEM = (

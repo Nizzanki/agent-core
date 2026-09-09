@@ -32,7 +32,8 @@ class PromptEnvironment(ABC):
     """Executes a candidate prompt against a task and reports an :class:`Execution`."""
 
     @abstractmethod
-    async def execute(self, candidate: PromptCandidate, task: PromptTaskSpec) -> Execution: ...
+    async def execute(self, candidate: PromptCandidate, task: PromptTaskSpec) -> Execution:
+        """Run *candidate* against *task* and return the resulting execution."""
 
 
 async def run_cases(

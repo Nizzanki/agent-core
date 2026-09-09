@@ -36,7 +36,7 @@ class ConvergenceDetector:
         self._rewards.append(reward)
         rewards = self._rewards
         best = max(rewards)
-        recent = rewards[-self.window :]
+        recent = rewards[-self.window:]
         moving_average = sum(recent) / len(recent)
         variance = pvariance(recent) if len(recent) > 1 else 0.0
 
